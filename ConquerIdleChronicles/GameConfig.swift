@@ -54,8 +54,27 @@ struct GameConfig {
     static let maxMonstersPerSpawn: Int = 3  // Increase for harder waves; tie to level later.
     
     /// Distance from player where monsters stop to avoid overlap (pixels; adjust based on sprite sizes).
-    static let monsterStopDistance: CGFloat = 40.0  // Slightly beyond health circle radius (30) for safety.
+    static let monsterStopDistance: CGFloat = 40.0  // Slightly beyond health circle radius
     
     /// Interval (seconds) between monster attacks when at stop position.
     static let monsterAttackInterval: TimeInterval = 1.0  // Every second; balance for challenge.
+    
+    // New configs for rewards
+    static let goldPerMonster: Int = 10
+    static let expPerMonster: Int = 20
+    
+    // New config for coin collection
+    static let coinCollectSpeed: Double = 1000.0  // Points per second; higher = faster
+    
+    // New config for auto-collect delay (seconds) if enabled
+    static let coinAutoCollectDelay: Double = 2.0  // Tune for visibility vs. speed
+    
+    // New config for coin lifetime (seconds) before disappearing if not collected
+    static let coinLifetime: Double = 5.0
+    
+    // New config for coin fade start delay (seconds after drop)
+    static let coinFadeStartDelay: Double = 2.0  // Starts fading at this time
+    
+    // New config for coin fade duration (seconds) at end of lifetime
+    static let coinFadeDuration: Double = 3.0  // Fades over this duration until disappear at lifetime
 }

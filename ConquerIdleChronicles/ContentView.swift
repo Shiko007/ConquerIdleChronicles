@@ -109,7 +109,8 @@ struct ContentView: View {
                         return isDead
                     },
                     getPlayerAttack: { player.attack },
-                    getPlayerHealth: { player.health }
+                    getPlayerHealth: { player.health },
+                    getAutoCollectEnabled: { player.autoCollectEnabled }
                 )
             } else {
                 // Cleanup when stopping
