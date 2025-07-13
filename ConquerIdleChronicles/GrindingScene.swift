@@ -6,7 +6,7 @@
 //
 
 import SpriteKit
-import UIKit  // For UIImage, UIBezierPath, etc.
+import UIKit  // For UIBezierPath; images now from Assets.
 
 /// SpriteKit scene for the grinding view.
 /// Handles monster spawning, movement, attacks, and health updates.
@@ -34,9 +34,8 @@ class GrindingScene: SKScene {
         self.getPlayerHealth = getPlayerHealth
         self.getAutoCollectEnabled = getAutoCollectEnabled
         
-        // Player sprite: Use SF Symbol as placeholder (archer)
-        let playerImage = UIImage(systemName: "figure.archery")?.withTintColor(.blue, renderingMode: .alwaysOriginal)
-        playerSprite = SKSpriteNode(texture: SKTexture(image: playerImage ?? UIImage()))
+        // Player sprite: Use centralized asset
+        playerSprite = SKSpriteNode(texture: SKTexture(image: Assets.playerImage))
         playerSprite.size = CGSize(width: 50, height: 50)
         playerSprite.position = CGPoint(x: size.width / 2, y: size.height / 2)  // Center
         
@@ -61,8 +60,8 @@ class GrindingScene: SKScene {
     
     /// Starts timer to spawn multiple monsters periodically.
     private func startSpawning() {
-        spawnTimer = Timer.scheduledTimer(withTimeInterval: GameConfig.monsterSpawnInterval, repeats: true) { [weak self] _ in
-            let numToSpawn = Int.random(in: GameConfig.minMonstersPerSpawn...GameConfig.maxMonstersPerSpawn)  // Random count per cycle
+        spawnTimer = Timer.scheduledTimer(withTimeInterval: GameConfig.Monster.spawnInterval, repeats: true) { [weak self] _ in
+            let numToSpawn = Int.random(in: GameConfig.Monster.minPerSpawn...GameConfig.Monster.maxPerSpawn)  // Random count per cycle
             for _ in 0..<numToSpawn {
                 self?.spawnMonster()
             }
@@ -72,9 +71,8 @@ class GrindingScene: SKScene {
     /// Spawns a single monster from a random edge.
     /// Called multiple times for waves.
     private func spawnMonster() {
-        // Placeholder monster: Goblin SF Symbol
-        let monsterImage = UIImage(systemName: "figure.walk")?.withTintColor(.red, renderingMode: .alwaysOriginal)
-        let monsterSprite = SKSpriteNode(texture: SKTexture(image: monsterImage ?? UIImage()))
+        // Monster sprite: Use centralized asset
+        let monsterSprite = SKSpriteNode(texture: SKTexture(image: Assets.monsterImage))
         monsterSprite.size = CGSize(width: 40, height: 40)
         
         // Random edge position
@@ -101,12 +99,12 @@ class GrindingScene: SKScene {
         
         // Calculate direction and stop position (at configurable distance from player to avoid overlap)
         let direction = CGVector(dx: playerSprite.position.x - position.x, dy: playerSprite.position.y - position.y).normalized()
-        let stopPosition = CGPoint(x: playerSprite.position.x - direction.dx * GameConfig.monsterStopDistance,
-                                   y: playerSprite.position.y - direction.dy * GameConfig.monsterStopDistance)
+        let stopPosition = CGPoint(x: playerSprite.position.x - direction.dx * GameConfig.Monster.stopDistance,
+                                   y: playerSprite.position.y - direction.dy * GameConfig.Monster.stopDistance)
         
         // Move to stop position
         let distanceToStop = sqrt(pow(stopPosition.x - position.x, 2) + pow(stopPosition.y - position.y, 2))
-        let duration = TimeInterval(distanceToStop / GameConfig.monsterSpeed)
+        let duration = TimeInterval(distanceToStop / GameConfig.Monster.speed)
         let moveAction = SKAction.move(to: stopPosition, duration: duration)
         monsterSprite.run(moveAction) { [weak self] in
             self?.startRepeatedAttacks(for: monster)
@@ -124,7 +122,7 @@ class GrindingScene: SKScene {
         
         // Update player health circle
         if let circle = childNode(withName: "playerHealthCircle") as? SKShapeNode {
-            let healthPercent = CGFloat(getPlayerHealth()) / CGFloat(GameConfig.playerMaxHealth)
+            let healthPercent = CGFloat(getPlayerHealth()) / CGFloat(GameConfig.Player.maxHealth)
             circle.path = UIBezierPath(arcCenter: .zero, radius: 30, startAngle: 0, endAngle: 2 * .pi * healthPercent, clockwise: true).cgPath
         }
         
@@ -148,7 +146,7 @@ class GrindingScene: SKScene {
                             self.monsters.remove(at: index)
                         }
                         self.onAddExp(GameConfig.expPerMonster)  // Configurable EXP reward
-                        self.dropGoldCoin(at: targetMonster.sprite.position)  // Drop coin instead of direct gold add
+                        self.dropGoldCoin(at: targetMonster.sprite.position)
                     }
                     return false  // Remove from arrows array
                 }
@@ -163,7 +161,7 @@ class GrindingScene: SKScene {
         
         // Auto-attack: Find nearest monster and shoot only if cooldown elapsed
         if let nearest = monsters.min(by: { self.distanceToPlayer($0.sprite) < self.distanceToPlayer($1.sprite) }) {
-            if currentTime - lastAttackTime >= GameConfig.playerAttackInterval {
+            if currentTime - lastAttackTime >= GameConfig.Player.attackInterval {
                 attackMonster(nearest)
                 lastAttackTime = currentTime  // Reset cooldown timer
             }
@@ -172,8 +170,8 @@ class GrindingScene: SKScene {
     
     /// Drops a tappable gold coin at the given position.
     private func dropGoldCoin(at position: CGPoint) {
-        let coinImage = UIImage(systemName: "dollarsign.circle.fill")?.withTintColor(.yellow, renderingMode: .alwaysOriginal)
-        let coinSprite = SKSpriteNode(texture: SKTexture(image: coinImage ?? UIImage()))
+        // Coin sprite: Use centralized asset
+        let coinSprite = SKSpriteNode(texture: SKTexture(image: Assets.coinImage))
         coinSprite.size = CGSize(width: 30, height: 30)
         coinSprite.position = position
         coinSprite.name = "coin"
@@ -243,9 +241,9 @@ class GrindingScene: SKScene {
     /// Starts repeated attacks on the player at configurable interval.
     private func startRepeatedAttacks(for monster: MonsterModel) {
         let attackAction = SKAction.sequence([
-            SKAction.wait(forDuration: GameConfig.monsterAttackInterval),
+            SKAction.wait(forDuration: GameConfig.Monster.attackInterval),
             SKAction.run { [weak self] in
-                _ = self?.onTakeDamage(GameConfig.monsterAttack)  // Apply damage; closure handles if dead
+                _ = self?.onTakeDamage(GameConfig.Monster.attack)  // Apply damage; closure handles if dead
             }
         ])
         monster.sprite.run(SKAction.repeatForever(attackAction))

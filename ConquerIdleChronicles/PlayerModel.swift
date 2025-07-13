@@ -13,10 +13,10 @@ struct PlayerModel {
     var gold: Int = 0
     var exp: Int = 0
     var level: Int = 1
-    var health: Int = GameConfig.playerMaxHealth  // Current health
-    var maxHealth: Int = GameConfig.playerMaxHealth  // Max for resets
-    var attack: Int = GameConfig.playerDefaultAttack  // Default attack (gear will modify later)
-    var autoCollectEnabled: Bool = false  // New flag for auto-collect feature; default false, purchasable later
+    var health: Int = GameConfig.Player.maxHealth  // Current health
+    var maxHealth: Int = GameConfig.Player.maxHealth  // Max for resets
+    var attack: Int = GameConfig.Player.defaultAttack  // Default attack (gear will modify later)
+    var autoCollectEnabled: Bool = false  // Flag for auto-collect feature; default false, purchasable later
     
     /// Calculates EXP needed for the next level using exponential formula.
     /// - Returns: Int value for required EXP.

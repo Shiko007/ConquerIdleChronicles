@@ -11,8 +11,8 @@ import SpriteKit  // For SKNode integration
 /// Model for a monster in the grinding scene.
 /// Each monster has health and is tied to a sprite for visuals.
 class MonsterModel: NSObject {
-    var health: Int = GameConfig.monsterBaseHealth
-    let maxHealth: Int = GameConfig.monsterBaseHealth
+    var health: Int = GameConfig.Monster.baseHealth
+    let maxHealth: Int = GameConfig.Monster.baseHealth
     var sprite: SKSpriteNode  // Visual representation
     
     init(sprite: SKSpriteNode) {
