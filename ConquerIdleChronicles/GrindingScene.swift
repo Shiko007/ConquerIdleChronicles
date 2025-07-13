@@ -188,11 +188,10 @@ class GrindingScene: SKScene {
         let disappearSequence = SKAction.sequence([fadeStartAction, fadeAction, removeAction])
         coinSprite.run(disappearSequence)
         
-        // If auto-collect enabled, schedule auto-collection after delay
+        // If auto-collect enabled, collect immediately
         if getAutoCollectEnabled() {
-            let delayAction = SKAction.wait(forDuration: GameConfig.coinAutoCollectDelay)
             let collectAction = SKAction.run { [weak self, weak coinSprite] in
-                guard let self = self, let coinSprite = coinSprite, coinSprite.parent != nil else { return }  // Skip if already collected or disappeared
+                guard let self = self, let coinSprite = coinSprite, coinSprite.parent != nil else { return }  // Skip if already disappeared
                 
                 coinSprite.removeAllActions()  // Cancel disappear sequence
                 
@@ -212,7 +211,7 @@ class GrindingScene: SKScene {
                     }
                 }
             }
-            coinSprite.run(SKAction.sequence([delayAction, collectAction]))
+            coinSprite.run(collectAction)
         }
     }
     

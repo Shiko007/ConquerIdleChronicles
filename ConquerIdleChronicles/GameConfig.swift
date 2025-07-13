@@ -66,9 +66,6 @@ struct GameConfig {
     // New config for coin collection
     static let coinCollectSpeed: Double = 1000.0  // Points per second; higher = faster
     
-    // New config for auto-collect delay (seconds) if enabled
-    static let coinAutoCollectDelay: Double = 2.0  // Tune for visibility vs. speed
-    
     // New config for coin lifetime (seconds) before disappearing if not collected
     static let coinLifetime: Double = 5.0
     
