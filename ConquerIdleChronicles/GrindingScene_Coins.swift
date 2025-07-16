@@ -45,7 +45,9 @@ extension GrindingScene {
                     guard let self = self else { return }
                     if let value = coinSprite.userData?["value"] as? Int {
                         self.onAddGold(value)
-                        self.showGoldLabel(value: value)
+                        if self.getShowGoldLabels() {
+                            self.showGoldLabel(value: value)
+                        }
                     }
                 }
             }
@@ -74,7 +76,9 @@ extension GrindingScene {
                     node.run(sequence) { [weak self] in
                         guard let self = self else { return }
                         self.onAddGold(value)
-                        self.showGoldLabel(value: value)
+                        if self.getShowGoldLabels() {
+                            self.showGoldLabel(value: value)
+                        }
                     }
                     return  // Stop after handling one coin per tap (avoids multiple if overlapping)
                 }

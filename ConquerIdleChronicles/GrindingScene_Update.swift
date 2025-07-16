@@ -18,12 +18,6 @@ extension GrindingScene {
             }
         }
         
-        // Update player health circle
-        if let circle = childNode(withName: "playerHealthCircle") as? SKShapeNode {
-            let healthPercent = CGFloat(getPlayerHealth()) / CGFloat(GameConfig.Player.maxHealth)
-            circle.path = UIBezierPath(arcCenter: .zero, radius: 30, startAngle: 0, endAngle: 2 * .pi * healthPercent, clockwise: true).cgPath
-        }
-        
         // Check for arrow hits on their specific targets
         arrows = arrows.filter { arrow in
             if let targetMonster = arrow.userData?["target"] as? MonsterModel {
@@ -47,8 +41,10 @@ extension GrindingScene {
                         self.onAddExp(GameConfig.expPerMonster)  // Configurable EXP reward
                         self.dropGoldCoin(at: targetMonster.sprite.position)
                     } else {
-                        // Not dead: Show damage label above monster
-                        self.showDamageLabel(on: targetMonster.sprite, damage: damage)
+                        // Not dead: Show damage label above monster if enabled
+                        if self.getShowDamageLabels() {
+                            self.showDamageLabel(on: targetMonster.sprite, damage: damage)
+                        }
                     }
                     return false  // Remove from arrows array
                 }

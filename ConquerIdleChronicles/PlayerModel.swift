@@ -17,6 +17,8 @@ struct PlayerModel {
     var maxHealth: Int = GameConfig.Player.maxHealth  // Max for resets
     var attack: Int = GameConfig.Player.defaultAttack  // Default attack (gear will modify later)
     var autoCollectEnabled: Bool = false  // Flag for auto-collect feature; default false, purchasable later
+    var showGoldLabels: Bool = true  // Toggle for gold "+value" labels; default true
+    var showDamageLabels: Bool = true  // Toggle for damage "-damage" labels; default true
     
     /// Calculates EXP needed for the next level using exponential formula.
     /// - Returns: Int value for required EXP.

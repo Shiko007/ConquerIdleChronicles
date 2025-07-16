@@ -38,7 +38,12 @@ extension GrindingScene {
         let attackAction = SKAction.sequence([
             SKAction.wait(forDuration: GameConfig.Monster.attackInterval),
             SKAction.run { [weak self] in
-                _ = self?.onTakeDamage(GameConfig.Monster.attack)  // Apply damage; closure handles if dead
+                guard let self = self else { return }
+                let damage = GameConfig.Monster.attack
+                _ = self.onTakeDamage(damage)  // Apply damage; closure handles if dead
+                if self.getShowDamageLabels() {
+                    self.showPlayerDamageLabel(damage: damage)
+                }
             }
         ])
         monster.sprite.run(SKAction.repeatForever(attackAction))

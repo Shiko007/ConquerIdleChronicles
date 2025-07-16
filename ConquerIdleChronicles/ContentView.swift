@@ -14,6 +14,7 @@ struct ContentView: View {
     @State private var player = PlayerModel()
     @State private var isGrinding: Bool = false
     @State private var showInventory: Bool = false
+    @State private var showSettings: Bool = false  // New state for settings sheet
     @State private var grindingScene: GrindingScene?  // Store scene for access and cleanup
 
     var body: some View {
@@ -42,57 +43,80 @@ struct ContentView: View {
                 .padding()
             }
             
-            // Top left: Player image + Level
-            VStack {
-                HStack {
-                    Image(systemName: "person.circle.fill")  // SF Symbol for player avatar
-                        .foregroundColor(.blue)
-                        .font(.system(size: 40))  // Larger for visibility
-                    Text("Level: \(player.level)")
-                        .font(.title)
-                        .bold()
-                    Spacer()  // Push to left
-                }
-                .padding()
-                
-                Spacer()  // Push to top
-            }
-            
-            // Top right: Inventory icon button
-            VStack {
-                HStack {
-                    Spacer()  // Push to right
-                    Button(action: {
-                        showInventory = true  // Open sheet
-                    }) {
-                        Image(systemName: "bag.fill")  // SF Symbol for inventory (bag icon)
-                            .foregroundColor(.gray)
-                            .font(.system(size: 40))  // Match player icon size
+            if isGrinding {
+                // Top left: Player image + Level (visible only during grinding)
+                VStack {
+                    HStack {
+                        Image(systemName: "person.circle.fill")  // SF Symbol for player avatar
+                            .foregroundColor(.blue)
+                            .font(.system(size: 40))  // Larger for visibility
+                        Text("Level: \(player.level)")
+                            .font(.title)
+                            .bold()
+                        Spacer()  // Push to left
                     }
+                    .padding()
+                    
+                    Spacer()  // Push to top
                 }
-                .padding()
                 
-                Spacer()  // Push to top
-            }
-            
-            // Bottom: EXP progress bar
-            VStack {
-                Spacer()  // Push to bottom
-                
-                VStack(spacing: 5) {
-                    ProgressView(value: Float(player.exp), total: Float(player.expNeededForNextLevel()))
-                        .progressViewStyle(LinearProgressViewStyle(tint: .blue))
-                        .frame(height: 10)  // Thinner bar
-                    Text("EXP: \(player.exp) / \(player.expNeededForNextLevel())")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
+                // Top right: Settings and Inventory buttons (visible only during grinding)
+                VStack {
+                    HStack {
+                        Spacer()  // Push buttons to the right
+                        
+                        Button(action: {
+                            showSettings = true  // Open settings sheet
+                        }) {
+                            Image(systemName: "gearshape.fill")  // SF Symbol for settings (gear icon)
+                                .foregroundColor(.gray)
+                                .font(.system(size: 40))
+                        }
+                        
+                        Button(action: {
+                            showInventory = true  // Open inventory sheet
+                        }) {
+                            Image(systemName: "bag.fill")  // SF Symbol for inventory (bag icon)
+                                .foregroundColor(.gray)
+                                .font(.system(size: 40))  // Match player icon size
+                        }
+                    }
+                    .padding()
+                    
+                    Spacer()  // Push to top
                 }
-                .padding(.horizontal)  // Horizontal padding for bar
-                .background(Color.white.opacity(0.8))  // Semi-transparent bg for visibility
+                
+                // Bottom: Health bar (red, above EXP) and EXP progress bar (visible only during grinding)
+                VStack {
+                    Spacer()  // Push to bottom
+                    
+                    VStack(spacing: 5) {
+                        // Health bar: Red progress view
+                        ProgressView(value: Float(player.health), total: Float(player.maxHealth))
+                            .progressViewStyle(LinearProgressViewStyle(tint: .red))
+                            .frame(height: 10)  // Thinner bar
+                        Text("HP: \(player.health) / \(player.maxHealth)")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                        
+                        // EXP bar: Blue progress view (below health)
+                        ProgressView(value: Float(player.exp), total: Float(player.expNeededForNextLevel()))
+                            .progressViewStyle(LinearProgressViewStyle(tint: .blue))
+                            .frame(height: 10)  // Thinner bar
+                        Text("EXP: \(player.exp) / \(player.expNeededForNextLevel())")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.horizontal)  // Horizontal padding for bars
+                    .background(Color.white.opacity(0.8))  // Semi-transparent bg for visibility
+                }
             }
         }
         .sheet(isPresented: $showInventory) {  // Modal sheet for inventory
             InventoryView(gold: player.gold)
+        }
+        .sheet(isPresented: $showSettings) {  // New modal sheet for settings
+            SettingsView(showGoldLabels: $player.showGoldLabels, showDamageLabels: $player.showDamageLabels)
         }
         .onChange(of: isGrinding) { oldValue, newValue in
             if newValue {
@@ -110,7 +134,9 @@ struct ContentView: View {
                     },
                     getPlayerAttack: { player.attack },
                     getPlayerHealth: { player.health },
-                    getAutoCollectEnabled: { player.autoCollectEnabled }
+                    getAutoCollectEnabled: { player.autoCollectEnabled },
+                    getShowGoldLabels: { player.showGoldLabels },
+                    getShowDamageLabels: { player.showDamageLabels }
                 )
             } else {
                 // Cleanup when stopping

@@ -36,6 +36,22 @@ extension GrindingScene {
         label.run(SKAction.sequence([group, remove]))
     }
     
+    /// Helper to show floating damage label above player (in red).
+    func showPlayerDamageLabel(damage: Int) {
+        let label = SKLabelNode(text: "-\(damage)")
+        label.fontName = "Helvetica-Bold"
+        label.fontSize = 20
+        label.fontColor = .red
+        label.position = CGPoint(x: self.playerSprite.position.x, y: self.playerSprite.position.y + 50)  // Above head
+        addChild(label)
+        
+        let moveUp = SKAction.moveBy(x: 0, y: 20, duration: 1.0)
+        let fadeOut = SKAction.fadeOut(withDuration: 1.0)
+        let group = SKAction.group([moveUp, fadeOut])
+        let remove = SKAction.removeFromParent()
+        label.run(SKAction.sequence([group, remove]))
+    }
+    
     /// Stops spawning and cleans up when grinding ends.
     func stopScene() {
         spawnTimer?.invalidate()

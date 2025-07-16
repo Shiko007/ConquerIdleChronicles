@@ -81,4 +81,8 @@ struct GameConfig {
     
     /// Duration (seconds) of fade until disappear.
     static let coinFadeDuration: Double = 3.0
+    
+    // MARK: - UI Elements
+    /// Corner radius for player health bar (e.g., half height for pill shape).
+    static let healthBarCornerRadius: CGFloat = 5.0  // barHeight / 2 = 5 for semicircle ends
 }

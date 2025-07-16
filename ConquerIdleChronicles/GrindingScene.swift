@@ -20,7 +20,9 @@ class GrindingScene: SKScene {
     let onTakeDamage: (Int) -> Bool  // Returns true if player dead
     let getPlayerAttack: () -> Int
     let getPlayerHealth: () -> Int
-    let getAutoCollectEnabled: () -> Bool  // New closure for auto-collect flag
+    let getAutoCollectEnabled: () -> Bool  // Flag for auto-collect
+    let getShowGoldLabels: () -> Bool  // New: Flag for gold labels
+    let getShowDamageLabels: () -> Bool  // New: Flag for damage labels
     
     let playerSprite: SKSpriteNode
     var monsters: [MonsterModel] = []  // Active monsters
@@ -28,13 +30,15 @@ class GrindingScene: SKScene {
     var lastAttackTime: TimeInterval = 0  // Tracks time of last arrow shot for cooldown
     var arrows: [SKShapeNode] = []  // Track active arrows for hit checks
     
-    init(size: CGSize, onAddGold: @escaping (Int) -> Void, onAddExp: @escaping (Int) -> Void, onTakeDamage: @escaping (Int) -> Bool, getPlayerAttack: @escaping () -> Int, getPlayerHealth: @escaping () -> Int, getAutoCollectEnabled: @escaping () -> Bool) {
+    init(size: CGSize, onAddGold: @escaping (Int) -> Void, onAddExp: @escaping (Int) -> Void, onTakeDamage: @escaping (Int) -> Bool, getPlayerAttack: @escaping () -> Int, getPlayerHealth: @escaping () -> Int, getAutoCollectEnabled: @escaping () -> Bool, getShowGoldLabels: @escaping () -> Bool, getShowDamageLabels: @escaping () -> Bool) {
         self.onAddGold = onAddGold
         self.onAddExp = onAddExp
         self.onTakeDamage = onTakeDamage
         self.getPlayerAttack = getPlayerAttack
         self.getPlayerHealth = getPlayerHealth
         self.getAutoCollectEnabled = getAutoCollectEnabled
+        self.getShowGoldLabels = getShowGoldLabels
+        self.getShowDamageLabels = getShowDamageLabels
         
         // Player sprite: Use centralized asset
         playerSprite = SKSpriteNode(texture: SKTexture(image: Assets.playerImage))
@@ -43,15 +47,6 @@ class GrindingScene: SKScene {
         
         super.init(size: size)
         addChild(playerSprite)
-        
-        // Player health circle: Green ring
-        let healthCircle = SKShapeNode(circleOfRadius: 30)
-        healthCircle.position = playerSprite.position
-        healthCircle.strokeColor = .green
-        healthCircle.lineWidth = 5
-        healthCircle.fillColor = .clear
-        addChild(healthCircle)
-        healthCircle.name = "playerHealthCircle"  // For updates
         
         startSpawning()
     }
