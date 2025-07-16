@@ -90,7 +90,14 @@ class GrindingScene: SKScene {
         monsters.append(monster)
         addChild(monsterSprite)
         
-        // Health bar: Red rectangle above monster
+        // Health bar background: Grey rectangle
+        let healthBg = SKShapeNode(rect: CGRect(x: -20, y: 25, width: 40, height: 5))
+        healthBg.fillColor = .gray
+        healthBg.strokeColor = .clear
+        healthBg.name = "healthBg"
+        monsterSprite.addChild(healthBg)
+        
+        // Health bar foreground: Red rectangle above background
         let healthBar = SKShapeNode(rect: CGRect(x: -20, y: 25, width: 40, height: 5))
         healthBar.fillColor = .red
         healthBar.strokeColor = .clear
@@ -138,7 +145,8 @@ class GrindingScene: SKScene {
                 let distance = self.distanceToTarget(arrow.position, target: targetMonster.sprite.position)
                 if distance < 10 {  // Hit threshold (adjust for precision)
                     arrow.removeFromParent()
-                    if targetMonster.takeDamage(self.getPlayerAttack()) {
+                    let damage = self.getPlayerAttack()
+                    if targetMonster.takeDamage(damage) {
                         // Dead: Remove monster, add rewards, stop any attacks
                         targetMonster.sprite.removeAllActions()  // Stop repeated attacks
                         targetMonster.sprite.removeFromParent()
@@ -147,6 +155,9 @@ class GrindingScene: SKScene {
                         }
                         self.onAddExp(GameConfig.expPerMonster)  // Configurable EXP reward
                         self.dropGoldCoin(at: targetMonster.sprite.position)
+                    } else {
+                        // Not dead: Show damage label above monster
+                        self.showDamageLabel(on: targetMonster.sprite, damage: damage)
                     }
                     return false  // Remove from arrows array
                 }
@@ -297,6 +308,22 @@ class GrindingScene: SKScene {
         label.fontSize = 20
         label.fontColor = .yellow
         label.position = CGPoint(x: self.playerSprite.position.x, y: self.playerSprite.position.y + 50)
+        addChild(label)
+        
+        let moveUp = SKAction.moveBy(x: 0, y: 20, duration: 1.0)
+        let fadeOut = SKAction.fadeOut(withDuration: 1.0)
+        let group = SKAction.group([moveUp, fadeOut])
+        let remove = SKAction.removeFromParent()
+        label.run(SKAction.sequence([group, remove]))
+    }
+    
+    /// Helper to show floating damage label above monster.
+    private func showDamageLabel(on sprite: SKSpriteNode, damage: Int) {
+        let label = SKLabelNode(text: "-\(damage)")
+        label.fontName = "Helvetica-Bold"
+        label.fontSize = 20
+        label.fontColor = .white  // White for visibility; adjust as needed
+        label.position = CGPoint(x: sprite.position.x, y: sprite.position.y + 50)  // Above head
         addChild(label)
         
         let moveUp = SKAction.moveBy(x: 0, y: 20, duration: 1.0)
