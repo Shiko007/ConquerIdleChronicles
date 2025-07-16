@@ -41,7 +41,7 @@ extension GrindingScene {
                 guard let self = self else { return }
                 let damage = GameConfig.Monster.attack
                 _ = self.onTakeDamage(damage)  // Apply damage; closure handles if dead
-                if self.getShowDamageLabels() {
+                if self.getShowPlayerDamageLabels() {
                     self.showPlayerDamageLabel(damage: damage)
                 }
             }

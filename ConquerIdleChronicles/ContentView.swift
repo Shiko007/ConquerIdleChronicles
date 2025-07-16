@@ -53,7 +53,7 @@ struct ContentView: View {
                         Text("Level: \(player.level)")
                             .font(.title)
                             .bold()
-                        Spacer()  // Push to left
+                        Spacer()
                     }
                     .padding()
                     
@@ -86,26 +86,44 @@ struct ContentView: View {
                     Spacer()  // Push to top
                 }
                 
-                // Bottom: Health bar (red, above EXP) and EXP progress bar (visible only during grinding)
+                // Bottom: Health bar (red, with icon on left/values on right) and EXP progress bar (dark yellow, with icon on left/values on right) (visible only during grinding)
                 VStack {
                     Spacer()  // Push to bottom
                     
                     VStack(spacing: 5) {
-                        // Health bar: Red progress view
-                        ProgressView(value: Float(player.health), total: Float(player.maxHealth))
-                            .progressViewStyle(LinearProgressViewStyle(tint: .red))
-                            .frame(height: 10)  // Thinner bar
-                        Text("HP: \(player.health) / \(player.maxHealth)")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
+                        // Health row: Icon(left) + Bar(middle) + Values(right)
+                        HStack {
+                            Image(systemName: "heart.fill")  // SF Symbol for HP
+                                .foregroundColor(.red)
+                                .font(.subheadline)
+                                .frame(width: 50, alignment: .leading)  // Fixed width for symmetry
+                            
+                            ProgressView(value: Float(player.health), total: Float(player.maxHealth))
+                                .progressViewStyle(LinearProgressViewStyle(tint: .red))
+                                .frame(height: 10)  // Thinner bar
+                            
+                            Text("\(player.health) / \(player.maxHealth)")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                                .frame(width: 100, alignment: .trailing)  // Fixed width for symmetry
+                        }
                         
-                        // EXP bar: Blue progress view (below health)
-                        ProgressView(value: Float(player.exp), total: Float(player.expNeededForNextLevel()))
-                            .progressViewStyle(LinearProgressViewStyle(tint: .blue))
-                            .frame(height: 10)  // Thinner bar
-                        Text("EXP: \(player.exp) / \(player.expNeededForNextLevel())")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
+                        // EXP row: Icon(left) + Bar(middle) + Values(right)
+                        HStack {
+                            Image(systemName: "star.fill")  // SF Symbol for EXP
+                                .foregroundColor(Color(red: 0.8, green: 0.6, blue: 0.0))  // Dark yellow
+                                .font(.subheadline)
+                                .frame(width: 50, alignment: .leading)  // Fixed width for symmetry
+                            
+                            ProgressView(value: Float(player.exp), total: Float(player.expNeededForNextLevel()))
+                                .progressViewStyle(LinearProgressViewStyle(tint: Color(red: 0.8, green: 0.6, blue: 0.0)))  // Dark yellow tint
+                                .frame(height: 10)  // Thinner bar
+                            
+                            Text("\(player.exp) / \(player.expNeededForNextLevel())")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                                .frame(width: 100, alignment: .trailing)  // Fixed width for symmetry
+                        }
                     }
                     .padding(.horizontal)  // Horizontal padding for bars
                     .background(Color.white.opacity(0.8))  // Semi-transparent bg for visibility
@@ -116,7 +134,7 @@ struct ContentView: View {
             InventoryView(gold: player.gold)
         }
         .sheet(isPresented: $showSettings) {  // New modal sheet for settings
-            SettingsView(showGoldLabels: $player.showGoldLabels, showDamageLabels: $player.showDamageLabels)
+            SettingsView(showGoldLabels: $player.showGoldLabels, showDamageLabels: $player.showDamageLabels, showPlayerDamageLabels: $player.showPlayerDamageLabels)
         }
         .onChange(of: isGrinding) { oldValue, newValue in
             if newValue {
@@ -136,7 +154,8 @@ struct ContentView: View {
                     getPlayerHealth: { player.health },
                     getAutoCollectEnabled: { player.autoCollectEnabled },
                     getShowGoldLabels: { player.showGoldLabels },
-                    getShowDamageLabels: { player.showDamageLabels }
+                    getShowDamageLabels: { player.showDamageLabels },
+                    getShowPlayerDamageLabels: { player.showPlayerDamageLabels }
                 )
             } else {
                 // Cleanup when stopping

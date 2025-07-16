@@ -23,6 +23,7 @@ class GrindingScene: SKScene {
     let getAutoCollectEnabled: () -> Bool  // Flag for auto-collect
     let getShowGoldLabels: () -> Bool  // New: Flag for gold labels
     let getShowDamageLabels: () -> Bool  // New: Flag for damage labels
+    let getShowPlayerDamageLabels: () -> Bool  // New: Flag for player damage labels
     
     let playerSprite: SKSpriteNode
     var monsters: [MonsterModel] = []  // Active monsters
@@ -30,7 +31,7 @@ class GrindingScene: SKScene {
     var lastAttackTime: TimeInterval = 0  // Tracks time of last arrow shot for cooldown
     var arrows: [SKShapeNode] = []  // Track active arrows for hit checks
     
-    init(size: CGSize, onAddGold: @escaping (Int) -> Void, onAddExp: @escaping (Int) -> Void, onTakeDamage: @escaping (Int) -> Bool, getPlayerAttack: @escaping () -> Int, getPlayerHealth: @escaping () -> Int, getAutoCollectEnabled: @escaping () -> Bool, getShowGoldLabels: @escaping () -> Bool, getShowDamageLabels: @escaping () -> Bool) {
+    init(size: CGSize, onAddGold: @escaping (Int) -> Void, onAddExp: @escaping (Int) -> Void, onTakeDamage: @escaping (Int) -> Bool, getPlayerAttack: @escaping () -> Int, getPlayerHealth: @escaping () -> Int, getAutoCollectEnabled: @escaping () -> Bool, getShowGoldLabels: @escaping () -> Bool, getShowDamageLabels: @escaping () -> Bool, getShowPlayerDamageLabels: @escaping () -> Bool) {
         self.onAddGold = onAddGold
         self.onAddExp = onAddExp
         self.onTakeDamage = onTakeDamage
@@ -39,6 +40,7 @@ class GrindingScene: SKScene {
         self.getAutoCollectEnabled = getAutoCollectEnabled
         self.getShowGoldLabels = getShowGoldLabels
         self.getShowDamageLabels = getShowDamageLabels
+        self.getShowPlayerDamageLabels = getShowPlayerDamageLabels
         
         // Player sprite: Use centralized asset
         playerSprite = SKSpriteNode(texture: SKTexture(image: Assets.playerImage))

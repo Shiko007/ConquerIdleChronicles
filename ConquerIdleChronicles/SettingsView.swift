@@ -12,6 +12,7 @@ import SwiftUI
 struct SettingsView: View {
     @Binding var showGoldLabels: Bool  // Binding to PlayerModel flag
     @Binding var showDamageLabels: Bool  // Binding to PlayerModel flag
+    @Binding var showPlayerDamageLabels: Bool  // New binding for player damage labels
 
     var body: some View {
         VStack(spacing: 20) {
@@ -23,7 +24,11 @@ struct SettingsView: View {
                 .padding()
                 .font(.headline)
 
-            Toggle("Show Damage Labels", isOn: $showDamageLabels)
+            Toggle("Show Monster Damage Labels", isOn: $showDamageLabels)
+                .padding()
+                .font(.headline)
+
+            Toggle("Show Player Damage Labels", isOn: $showPlayerDamageLabels)
                 .padding()
                 .font(.headline)
 
@@ -38,5 +43,5 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView(showGoldLabels: .constant(true), showDamageLabels: .constant(true))  // Sample preview
+    SettingsView(showGoldLabels: .constant(true), showDamageLabels: .constant(true), showPlayerDamageLabels: .constant(true))  // Sample preview
 }

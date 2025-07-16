@@ -18,7 +18,8 @@ struct PlayerModel {
     var attack: Int = GameConfig.Player.defaultAttack  // Default attack (gear will modify later)
     var autoCollectEnabled: Bool = false  // Flag for auto-collect feature; default false, purchasable later
     var showGoldLabels: Bool = true  // Toggle for gold "+value" labels; default true
-    var showDamageLabels: Bool = true  // Toggle for damage "-damage" labels; default true
+    var showDamageLabels: Bool = true  // Toggle for damage "-damage" labels on monsters; default true
+    var showPlayerDamageLabels: Bool = true  // New toggle for damage on player head; default true
     
     /// Calculates EXP needed for the next level using exponential formula.
     /// - Returns: Int value for required EXP.
